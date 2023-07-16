@@ -2,8 +2,12 @@ package secrets
 
 import (
 	"fmt"
+	"sync"
 	"testing"
+	"time"
 
+	"github.com/checkmarx/2ms/plugins"
+	"github.com/checkmarx/2ms/reporting"
 	"github.com/zricethezav/gitleaks/v8/config"
 )
 
@@ -353,4 +357,67 @@ func createRules(ruleIDs ...string) map[string]config.Rule {
 		}
 	}
 	return rules
+}
+
+func TestSecrets(t *testing.T) {
+	secrets := []struct {
+		Content    string
+		Name       string
+		ShouldFind bool
+	}{
+		{
+			Content:    "",
+			Name:       "empty",
+			ShouldFind: false,
+		},
+		{
+			Content:    "username:password@github.com",
+			Name:       "Authenticated URL",
+			ShouldFind: true,
+		},
+		{
+			Content:    "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",
+			Name:       "GitHub Personal Access Token",
+			ShouldFind: true,
+		},
+		{
+			Content:    "AKCp9nGFo4jMzsA32Qg6DrjqEbyNBn1MuZbtyW1bQAFqSp6v2WMCagbzbPbChqcr9yXAiJYka",
+			Name:       "JFROG Secret",
+			ShouldFind: true,
+		},
+	}
+
+	detector, err := Init([]string{}, []string{})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, secret := range secrets {
+		name := secret.Name
+		if name == "" {
+			name = secret.Content
+		}
+		t.Run(name, func(t *testing.T) {
+			fmt.Printf("Start test %s", name)
+			secretsChan := make(chan reporting.Secret)
+			defer close(secretsChan)
+			wg := &sync.WaitGroup{}
+			wg.Add(1)
+			detector.Detect(plugins.Item{Content: secret.Content}, secretsChan, wg, nil)
+
+			select {
+			case <-time.After(1 * time.Second):
+				if secret.ShouldFind {
+					t.Fatalf("secret \"%s\" not found", secret.Name)
+				}
+			case <-secretsChan:
+				if !secret.ShouldFind {
+					t.Fatal("should not find")
+				}
+			}
+
+			// fmt.Printf("End test %s", name)
+		})
+	}
+
 }
