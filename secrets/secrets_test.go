@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sync"
 	"testing"
-	"time"
 
 	"github.com/checkmarx/2ms/plugins"
 	"github.com/checkmarx/2ms/reporting"
@@ -399,24 +398,19 @@ func TestSecrets(t *testing.T) {
 		}
 		t.Run(name, func(t *testing.T) {
 			fmt.Printf("Start test %s", name)
-			secretsChan := make(chan reporting.Secret)
-			defer close(secretsChan)
+			secretsChan := make(chan reporting.Secret, 1)
 			wg := &sync.WaitGroup{}
 			wg.Add(1)
 			detector.Detect(plugins.Item{Content: secret.Content}, secretsChan, wg, nil)
+			close(secretsChan)
 
-			select {
-			case <-time.After(1 * time.Second):
-				if secret.ShouldFind {
-					t.Fatalf("secret \"%s\" not found", secret.Name)
-				}
-			case <-secretsChan:
-				if !secret.ShouldFind {
-					t.Fatal("should not find")
-				}
+			s := <-secretsChan
+			if s.Value == "" && secret.ShouldFind {
+				t.Errorf("secret \"%s\" not found", secret.Name)
 			}
-
-			// fmt.Printf("End test %s", name)
+			if s.Value != "" && !secret.ShouldFind {
+				t.Errorf("should not find")
+			}
 		})
 	}
 
