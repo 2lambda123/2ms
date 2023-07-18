@@ -291,6 +291,7 @@ func loadAllRules() ([]Rule, error) {
 		{Rule: *rules.Heroku(), Tags: []string{TagApiKey}},
 		{Rule: *rules.HubSpot(), Tags: []string{TagApiToken, TagApiKey}},
 		{Rule: *rules.Intercom(), Tags: []string{TagApiToken, TagApiKey}},
+		// TODO: Add JFROG when it will be released https://github.com/gitleaks/gitleaks/pull/1233
 		{Rule: *rules.JWT(), Tags: []string{TagAccessToken}},
 		{Rule: *rules.KrakenAccessToken(), Tags: []string{TagAccessToken}},
 		{Rule: *rules.KucoinAccessToken(), Tags: []string{TagAccessToken}},

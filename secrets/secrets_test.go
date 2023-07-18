@@ -380,8 +380,13 @@ func TestSecrets(t *testing.T) {
 			ShouldFind: true,
 		},
 		{
-			Content:    "AKCp9nGFo4jMzsA32Qg6DrjqEbyNBn1MuZbtyW1bQAFqSp6v2WMCagbzbPbChqcr9yXAiJYka",
-			Name:       "JFROG Secret",
+			Content:    "AKCp8jRRiQSAbghbuZmHKZcaKGEqbAASGH2SAb3rxXJQsSq8yVga8gFXe6aHpcRmzuHxN6oaT",
+			Name:       "JFROG Secret without keyword",
+			ShouldFind: false,
+		},
+		{
+			Content:    "--set imagePullSecretJfrog.password=AKCp8kqqfQbYifrbyvqusjyk6N3QKprXTv9B8HTitLbJzXT1kW7dDticXTsJpCrbqtizAwK4D \\",
+			Name:       "JFROG Secret with keyword (real example)",
 			ShouldFind: true,
 		},
 	}
