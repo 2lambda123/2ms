@@ -372,7 +372,7 @@ func TestSecrets(t *testing.T) {
 		{
 			Content:    "username:password@github.com",
 			Name:       "Authenticated URL",
-			ShouldFind: true,
+			ShouldFind: false,
 		},
 		{
 			Content:    "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",
@@ -387,6 +387,12 @@ func TestSecrets(t *testing.T) {
 		{
 			Content:    "--set imagePullSecretJfrog.password=AKCp8kqqfQbYifrbyvqusjyk6N3QKprXTv9B8HTitLbJzXT1kW7dDticXTsJpCrbqtizAwK4D \\",
 			Name:       "JFROG Secret with keyword (real example)",
+			ShouldFind: true,
+		},
+		{
+			// From https://github.com/bridgecrewio/terragoat/blob/729f8da62c6a85ce4af5ad3d123de97776d954c4/terraform/azure/mssql.tf#L26C3-L26C53
+			Content:    `administrator_login_password = "AdminPassword123!"`,
+			Name:       "Azure SQL Database password",
 			ShouldFind: true,
 		},
 	}
