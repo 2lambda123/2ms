@@ -380,13 +380,18 @@ func TestSecrets(t *testing.T) {
 			ShouldFind: true,
 		},
 		{
-			Content:    "AKCp8jRRiQSAbghbuZmHKZcaKGEqbAASGH2SAb3rxXJQsSq8yVga8gFXe6aHpcRmzuHxN6oaT",
+			Content:    "AKCp8jRRiQSAbghbuZmHKZcaKGEqbAASGH2SAb3rxXJQsSq9dGga8gFXe6aHpcRmzuHxN6oaT",
 			Name:       "JFROG Secret without keyword",
 			ShouldFind: false,
 		},
 		{
 			Content:    "--set imagePullSecretJfrog.password=AKCp8kqqfQbYifrbyvqusjyk6N3QKprXTv9B8HTitLbJzXT1kW7dDticXTsJpCrbqtizAwK4D \\",
 			Name:       "JFROG Secret with keyword (real example)",
+			ShouldFind: true,
+		},
+		{
+			Content:    "--docker-password=AKCp8kqX8yeKBTqgm2XExHsp8yVdJn6SAgQmS1nJMfMDmzxEqX74rUGhedaWu7Eovid3VsMwb",
+			Name:       "JFROG Secret as kubectl argument",
 			ShouldFind: true,
 		},
 	}
