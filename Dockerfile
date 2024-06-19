@@ -23,4 +23,3 @@ RUN git config --global --add safe.directory /repo
 
 COPY --from=builder /app/2ms /2ms
 ENTRYPOINT ["/2ms"]
-
