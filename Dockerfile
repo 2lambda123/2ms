@@ -12,7 +12,7 @@ RUN go build -o /app/2ms .
 # Runtime image
 # kics-scan disable=b03a748a-542d-44f4-bb86-9199ab4fd2d5
 # ^^^^ disable kics Healthcheck result
-FROM alpine:3.18
+FROM alpine:3
 
 RUN apk add --no-cache git=2.40.1-r0
 
